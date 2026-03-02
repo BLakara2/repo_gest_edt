@@ -1,121 +1,62 @@
 import React, { useState } from 'react';
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  CssBaseline,
-  IconButton,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
-  Container,
-  Box,
-  Switch,
-} from '@mui/material';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import MenuIcon from '@mui/icons-material/Menu';
-import HomeIcon from '@mui/icons-material/Home';
-import EventIcon from '@mui/icons-material/Event';
-import InfoIcon from '@mui/icons-material/Info';
-import { brown } from '@mui/material/colors';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import type { EventItem } from './types';
+import { INITIAL_EVENTS } from './constants';
 import HomePage from './pages/HomePage';
 import PlanningPage from './pages/PlanningPage';
 import AboutPage from './pages/AboutPage';
 
-const App: React.FC = () => {
-  const [mode, setMode] = useState<'light' | 'dark'>('light');
-  const [drawerOpen, setDrawerOpen] = useState(false);
+type Page = 'Accueil' | 'Planning' | 'À propos';
+const PAGES: Page[] = ['Accueil', 'Planning', 'À propos'];
 
-  const theme = createTheme({
-    palette: {
-      mode,
-      primary: brown,
-      secondary: {
-        main: '#a1887f',
-      },
-      background: {
-        default: mode === 'light' ? '#f8f3f0' : '#2e2723',
-        paper: mode === 'light' ? '#fff' : '#3e3530',
-      },
-    },
-  });
-  
-  const toggleTheme = () => setMode(prev => (prev === 'light' ? 'dark' : 'light'));
-  const toggleDrawer = () => setDrawerOpen(!drawerOpen);
+const App: React.FC = () => {
+  const [page,   setPage]   = useState<Page>('Accueil');
+  const [events, setEvents] = useState<EventItem[]>(INITIAL_EVENTS);
 
   return (
-    <ThemeProvider theme={theme}>
-      <Router>
-        <CssBaseline />
+    <div style={{ minHeight: '100vh', background: '#0F0C0A', fontFamily: '"Inter", system-ui, sans-serif', color: '#F5EFE7' }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
+        * { box-sizing: border-box; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+      `}</style>
 
-        {/* Barre de navigation */}
-        <AppBar position="fixed" color="primary">
-          <Toolbar>
-            <IconButton edge="start" color="inherit" onClick={toggleDrawer} sx={{ mr: 2 }}>
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" sx={{ flexGrow: 1 }}>
-              Gestion d'emploi du temps
-            </Typography>
-            <Switch checked={mode === 'dark'} onChange={toggleTheme} />
-          </Toolbar>
-        </AppBar>
+      {/* Ambient glow */}
+      <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, background: `radial-gradient(ellipse 80% 60% at 20% 0%, rgba(184,149,106,0.08) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 100%, rgba(160,184,197,0.06) 0%, transparent 60%)` }} />
 
-        {/* Menu latéral */}
-        <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer}>
-          <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer}>
-            <List>
-              <ListItem button component={Link} to="/">
-                <HomeIcon sx={{ mr: 1 }} />
-                <ListItemText primary="Accueil" />
-              </ListItem>
-              <ListItem button component={Link} to="/planning">
-                <EventIcon sx={{ mr: 1 }} />
-                <ListItemText primary="Planning" />
-              </ListItem>
-              <ListItem button component={Link} to="/about">
-                <InfoIcon sx={{ mr: 1 }} />
-                <ListItemText primary="À propos" />
-              </ListItem>
-            </List>
-          </Box>
-        </Drawer>
+      {/* Nav */}
+      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, height: 64, display: 'flex', alignItems: 'center', padding: '0 clamp(16px, 4vw, 40px)', gap: 8, background: 'rgba(15,12,10,0.88)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+        <div style={{ fontFamily: '"Playfair Display", Georgia, serif', fontWeight: 700, fontSize: 20, color: '#B8956A', letterSpacing: 0.5, marginRight: 20, flexShrink: 0 }}>
+          Tempo
+        </div>
+        <div style={{ display: 'flex', gap: 4 }}>
+          {PAGES.map(p => (
+            <button key={p} onClick={() => setPage(p)}
+              onMouseEnter={e => { if (page !== p) e.currentTarget.style.color = '#A08060'; }}
+              onMouseLeave={e => { if (page !== p) e.currentTarget.style.color = '#6A5E52'; }}
+              style={{ background: page === p ? 'rgba(184,149,106,0.15)' : 'transparent', border: 'none', borderRadius: 10, color: page === p ? '#B8956A' : '#6A5E52', padding: '8px 18px', fontFamily: 'inherit', fontSize: 14, fontWeight: page === p ? 600 : 400, cursor: 'pointer', transition: 'all 0.2s', letterSpacing: 0.3 }}>
+              {p}
+            </button>
+          ))}
+        </div>
+      </nav>
 
-        {/* Contenu principal */}
-        <Box component="main" sx={{ flexGrow: 1, p: 3, mt: 8, mb: 6 }}>
-  <Container maxWidth={false}>
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/planning" element={<PlanningPage />} />
-      <Route path="/about" element={<AboutPage />} />
-    </Routes>
-  </Container>
-</Box>
+      {/* Contenu */}
+      <main style={{ paddingTop: 64, paddingBottom: 80, minHeight: 'calc(100vh - 64px)', position: 'relative', zIndex: 1 }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 clamp(16px, 4vw, 48px)' }}>
+          {page === 'Accueil'  && <HomePage  onNavigate={(p) => setPage(p as Page)} events={events} />}
+          {page === 'Planning' && <PlanningPage events={events} setEvents={setEvents} />}
+          {page === 'À propos' && <AboutPage />}
+        </div>
+      </main>
 
-
-        {/* Footer */}
-        <Box
-          component="footer"
-          sx={{
-            p: 2,
-            textAlign: 'center',
-            bgcolor: theme.palette.background.paper,
-            color: theme.palette.text.secondary,
-            borderTop: `1px solid ${mode === 'light' ? '#ddd' : '#555'}`,
-            position: 'fixed',
-            bottom: 0,
-            left: 0,
-            width: '100%',
-          }}
-        >
-          <Typography variant="body2">
-            © 2025 Mon Emploi du Temps — Créé par BLakara2 + du café ☕
-          </Typography>
-        </Box>
-      </Router>
-    </ThemeProvider>
+      {/* Footer */}
+      <footer style={{ borderTop: '1px solid rgba(255,255,255,0.07)', padding: '16px 24px', textAlign: 'center', color: '#4A4034', fontSize: 13, background: '#0A0806' }}>
+        © 2025 Mon Emploi du Temps — Créé par BLakara2 + du café ☕
+      </footer>
+    </div>
   );
 };
 
