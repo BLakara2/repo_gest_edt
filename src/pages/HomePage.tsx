@@ -130,7 +130,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, events }) => {
         <div style={{ background: 'linear-gradient(135deg, rgba(184,149,106,0.12), rgba(160,184,197,0.06))', border: '1px solid rgba(184,149,106,0.2)', borderRadius: 20, padding: '28px 32px', maxWidth: 300, flexShrink: 0 }}>
           <div style={{ fontSize: 48, lineHeight: 1, color: '#B8956A', opacity: 0.4, marginBottom: 8, fontFamily: 'Georgia, serif' }}>"</div>
           <p style={{ fontFamily: '"Playfair Display", Georgia, serif', color: '#F5EFE7', fontSize: 15, lineHeight: 1.8, margin: '0 0 14px', fontStyle: 'italic' }}>
-            Le secret pour avancer est de commencer.
+            `Le secret pour avancer est de commencer.`
           </p>
           <span style={{ color: '#B8956A', fontSize: 12, fontWeight: 600, letterSpacing: 1 }}>— MARK TWAIN</span>
         </div>
